@@ -39,6 +39,15 @@ Move it with `omarchy bar move darkosxl.printer --section right`.
 
 Click the printer icon. Printers are discovered automatically (the list refreshes every 15 s while open; `r` refreshes now). The default printer is preselected and marked ★. Recent PDFs from `~/Downloads`, `~/Documents` and `~/Desktop` are listed; `Browse…` opens a file picker. `Enter` prints, `Esc` closes.
 
+## Update and remove
+
+```bash
+omarchy plugin update darkosxl.printer
+omarchy plugin remove darkosxl.printer
+```
+
+The installer's packages (cups, avahi, nss-mdns, zenity) are left in place; remove them with `omarchy pkg remove` if unwanted.
+
 ## Troubleshooting
 
 | Problem | Check |
