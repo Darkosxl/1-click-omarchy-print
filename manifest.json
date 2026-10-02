@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "darkosxl.printer",
+  "name": "Printer",
+  "version": "0.1.0",
+  "author": "Darkosxl",
+  "license": "MIT",
+  "description": "Bar button to pick a CUPS printer and print a PDF.",
+  "kinds": ["bar-widget"],
+  "entryPoints": { "barWidget": "Widget.qml" },
+  "barWidget": {
+    "displayName": "Printer",
+    "description": "Click to choose a PDF and a printer, then print.",
+    "category": "System",
+    "allowMultiple": false,
+    "defaultSection": "right"
+  }
+}

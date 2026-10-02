@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Pick a CUPS printer, pick a PDF, print it. Usage: omarchy-printer [file.pdf]
+set -euo pipefail
+
+for cmd in lp lpstat zenity; do
+  command -v "$cmd" >/dev/null || { notify-send -u critical "Printer" "Missing: $cmd"; exit 1; }
+done
+
+file="${1:-}"
+if [[ -z $file ]]; then
+  file=$(zenity --file-selection --title="PDF to print" \
+    --file-filter='PDF | *.pdf *.PDF' --filename="$HOME/") || exit 0
+fi
+[[ -f $file ]] || { notify-send -u critical "Printer" "Not a file: $file"; exit 1; }
+[[ $(file -b --mime-type -- "$file") == application/pdf ]] \
+  || { notify-send -u critical "Printer" "Not a PDF: ${file##*/}"; exit 1; }
+
+mapfile -t printers < <(lpstat -e 2>/dev/null)
+if ((${#printers[@]} == 0)); then
+  notify-send -u critical "Printer" "No printers found. Is cups + avahi-daemon running?"
+  exit 1
+fi
+
+default=$(lpstat -d 2>/dev/null | sed -n 's/^system default destination: //p')
+rows=()
+for p in "${printers[@]}"; do
+  [[ $p == "$default" ]] && rows+=("TRUE" "$p" "default") || rows+=("FALSE" "$p" "")
+done
+
+printer=$(zenity --list --radiolist --title="Print ${file##*/}" --text="Choose a printer" \
+  --column="" --column="Printer" --column="" --hide-header \
+  --print-column=2 --width=420 --height=420 "${rows[@]}") || exit 0
+
+if out=$(lp -d "$printer" -t "${file##*/}" -- "$file" 2>&1); then
+  notify-send "Printer" "Sent ${file##*/} to $printer"
+else
+  notify-send -u critical "Printer" "Print failed: $out"
+  exit 1
+fi
