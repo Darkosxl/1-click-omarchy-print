@@ -1,16 +1,20 @@
 {
   "schemaVersion": 1,
   "id": "darkosxl.printer",
-  "name": "Printer",
+  "name": "1-Click Print",
   "version": "0.1.0",
   "author": "Darkosxl",
   "license": "MIT",
-  "description": "Bar button to pick a CUPS printer and print a PDF.",
-  "kinds": ["bar-widget"],
-  "entryPoints": { "barWidget": "Widget.qml" },
+  "description": "One-click PDF printing from the Omarchy bar: pick a printer and a PDF in a small popup, press Print.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Widget.qml"
+  },
   "barWidget": {
-    "displayName": "Printer",
-    "description": "Click to choose a PDF and a printer, then print.",
+    "displayName": "1-Click Print",
+    "description": "Click the bar icon, pick a printer and a PDF, press Print.",
     "category": "System",
     "allowMultiple": false,
     "defaultSection": "right"

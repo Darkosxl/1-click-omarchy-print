@@ -1,4 +1,4 @@
-# omarchy-printer
+# 1-Click Print for Omarchy
 
 An [Omarchy](https://omarchy.org) top-bar button. Click it for a popup panel: pick a printer, pick a PDF (recent ones listed, or Browse…), press Print.
 
@@ -7,6 +7,17 @@ discovered over mDNS/DNS-SD (AirPrint / IPP Everywhere) via Avahi, USB printers,
 and manually added queues.
 
 ![Printer panel](preview.png)
+
+## How it's different
+
+Other Omarchy printer plugins manage printers (settings, queues, toner) or are full print dialogs. This one does a single job:
+
+- **Lives in the top bar.** One click opens a small popup; no launcher, no separate window.
+- **Simple.** Pick a printer, pick a PDF, press Print. No page ranges, duplex or settings screens.
+- **Auto-discovers printers.** Whatever CUPS sees (AirPrint/IPP network, USB) shows up, with the default preselected.
+- **Light.** Plain `lp` plus `zenity`; no Python packages, no printer drivers.
+
+If you need toner levels, queue control or duplex, use one of those plugins alongside this one.
 
 ## Quick start
 
