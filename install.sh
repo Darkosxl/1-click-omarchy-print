@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# One-shot setup: curl -fsSL https://raw.githubusercontent.com/Darkosxl/omarchy-printer/main/install.sh | bash
+# One-shot setup: curl -fsSL https://raw.githubusercontent.com/Darkosxl/1-click-omarchy-print/main/install.sh | bash
 set -euo pipefail
 
 echo "==> Installing printing packages (cups, avahi, nss-mdns, zenity)"
@@ -15,6 +15,6 @@ if ! grep -qE '^hosts:.*mdns' /etc/nsswitch.conf; then
 fi
 
 echo "==> Adding the bar widget"
-omarchy plugin add https://github.com/Darkosxl/omarchy-printer.git --enable --yes
+omarchy plugin add https://github.com/Darkosxl/1-click-omarchy-print.git --enable --yes
 
 echo "Done. Click the printer icon in the bar."

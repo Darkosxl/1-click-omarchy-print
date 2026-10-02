@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "darkosxl.printer",
-  "name": "1-Click Print",
+  "name": "1-Click Omarchy Print",
   "version": "0.1.0",
   "author": "Darkosxl",
   "license": "MIT",
@@ -13,7 +13,7 @@
     "barWidget": "Widget.qml"
   },
   "barWidget": {
-    "displayName": "1-Click Print",
+    "displayName": "1-Click Omarchy Print",
     "description": "Click the bar icon, pick a printer and a PDF, press Print.",
     "category": "System",
     "allowMultiple": false,

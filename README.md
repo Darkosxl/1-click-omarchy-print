@@ -1,4 +1,4 @@
-# 1-Click Print for Omarchy
+# 1-Click Omarchy Print
 
 An [Omarchy](https://omarchy.org) top-bar button. Click it for a popup panel: pick a printer, pick a PDF (recent ones listed, or Browse…), press Print.
 
@@ -22,7 +22,7 @@ If you need toner levels, queue control or duplex, use one of those plugins alon
 ## Quick start
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Darkosxl/omarchy-printer/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Darkosxl/1-click-omarchy-print/main/install.sh | bash
 ```
 
 Installs the dependencies, enables CUPS + Avahi, and adds the widget. Or do it by hand:
@@ -41,7 +41,7 @@ On Arch, `nss-mdns` must be in the `hosts:` line of `/etc/nsswitch.conf`
 ## Install
 
 ```bash
-omarchy plugin add https://github.com/Darkosxl/omarchy-printer.git --enable
+omarchy plugin add https://github.com/Darkosxl/1-click-omarchy-print.git --enable
 ```
 
 Move it with `omarchy bar move darkosxl.printer --section right`.
