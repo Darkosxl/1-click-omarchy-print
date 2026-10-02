@@ -6,6 +6,16 @@ Printers come from CUPS, so anything CUPS sees shows up: network printers
 discovered over mDNS/DNS-SD (AirPrint / IPP Everywhere) via Avahi, USB printers,
 and manually added queues.
 
+![Printer panel](preview.png)
+
+## Quick start
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Darkosxl/omarchy-printer/main/install.sh | bash
+```
+
+Installs the dependencies, enables CUPS + Avahi, and adds the widget. Or do it by hand:
+
 ## Requirements
 
 ```bash
@@ -20,7 +30,7 @@ On Arch, `nss-mdns` must be in the `hosts:` line of `/etc/nsswitch.conf`
 ## Install
 
 ```bash
-omarchy plugin add https://github.com/<your-user>/omarchy-printer.git --enable
+omarchy plugin add https://github.com/Darkosxl/omarchy-printer.git --enable
 ```
 
 Move it with `omarchy bar move darkosxl.printer --section right`.

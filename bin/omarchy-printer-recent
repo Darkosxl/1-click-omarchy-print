@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
-# Newest PDFs from the usual places, newest first (max 6).
+# Newest PDFs from the usual places, newest first (max 4).
 find "$HOME/Downloads" "$HOME/Documents" "$HOME/Desktop" -maxdepth 3 -type f -iname '*.pdf' \
-  -printf '%T@\t%p\n' 2>/dev/null | sort -rn | head -6 | cut -f2-
+  -printf '%T@\t%p\n' 2>/dev/null | sort -rn | head -4 | cut -f2-

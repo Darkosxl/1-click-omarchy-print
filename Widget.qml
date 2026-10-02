@@ -138,7 +138,7 @@ Panel {
     open: root.opened
     focusTarget: keyCatcher
     contentWidth: panel.fittedContentWidth(Style.space(380))
-    contentHeight: panel.fittedContentHeight(column.implicitHeight, Style.space(640))
+    contentHeight: panel.fittedContentHeight(column.implicitHeight + footer.implicitHeight + Style.space(10), Style.space(780))
 
     PanelKeyCatcher {
       id: keyCatcher
@@ -150,7 +150,11 @@ Panel {
 
       Flickable {
         id: flick
-        anchors.fill: parent
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: footer.bottom
+        anchors.topMargin: Style.space(10)
+        anchors.bottom: parent.bottom
         contentWidth: width
         contentHeight: column.implicitHeight
         clip: true
@@ -162,24 +166,6 @@ Panel {
           id: column
           width: flick.width
           spacing: Style.space(12)
-
-          PanelHero {
-            width: parent.width
-            title: "Print"
-            meta: root.printers.length + (root.printers.length === 1 ? " printer" : " printers")
-            foreground: root.foreground
-            fontFamily: root.fontFamily
-            iconComponent: Component {
-              Text {
-                text: ""
-                color: root.foreground
-                font.family: root.fontFamily
-                font.pixelSize: Style.font.display
-              }
-            }
-          }
-
-          PanelSeparator { foreground: root.foreground }
 
           // ---------- Printers ----------
           Column {
@@ -196,37 +182,54 @@ Panel {
             Text {
               visible: root.printers.length === 0
               width: parent.width
-              text: "No printers found.\nCheck that cups and avahi-daemon are running."
+              text: listProc.running ? "Searching for printers…" : "No printers found.\nCheck that cups and avahi-daemon are running."
               color: root.dim
               font.family: root.fontFamily
               font.pixelSize: Style.font.caption
               wrapMode: Text.WordWrap
             }
 
-            Repeater {
-              model: root.printers
+            Flickable {
+              width: parent.width
+              height: Math.min(printerList.implicitHeight, Style.space(228))
+              contentWidth: width
+              contentHeight: printerList.implicitHeight
+              clip: true
+              boundsBehavior: Flickable.StopAtBounds
+              interactive: contentHeight > height
+              ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
 
-              Button {
-                required property var modelData
+              Column {
+                id: printerList
                 width: parent.width
-                text: root.pretty(modelData.name) + (modelData.isDefault ? "  ★" : "")
-                leftAlign: true
-                bordered: true
-                selected: modelData.name === root.selectedPrinter
-                foreground: root.foreground
-                fontFamily: root.fontFamily
-                fontSize: Style.font.bodySmall
-                verticalPadding: Style.spacing.controlPaddingY
-                onClicked: root.selectedPrinter = modelData.name
+                spacing: Style.space(8)
 
-                Text {
-                  anchors.right: parent.right
-                  anchors.rightMargin: Style.space(10)
-                  anchors.verticalCenter: parent.verticalCenter
-                  text: modelData.state
-                  color: modelData.state === "disabled" ? root.urgent : root.dim
-                  font.family: root.fontFamily
-                  font.pixelSize: Style.font.caption
+                Repeater {
+                  model: root.printers
+
+                  Button {
+                    required property var modelData
+                    width: printerList.width
+                    text: root.pretty(modelData.name) + (modelData.isDefault ? "  ★" : "")
+                    leftAlign: true
+                    bordered: true
+                    selected: modelData.name === root.selectedPrinter
+                    foreground: root.foreground
+                    fontFamily: root.fontFamily
+                    fontSize: Style.font.bodySmall
+                    verticalPadding: Style.spacing.controlPaddingY
+                    onClicked: root.selectedPrinter = modelData.name
+
+                    Text {
+                      anchors.right: parent.right
+                      anchors.rightMargin: Style.space(10)
+                      anchors.verticalCenter: parent.verticalCenter
+                      text: modelData.state
+                      color: modelData.state === "disabled" ? root.urgent : root.dim
+                      font.family: root.fontFamily
+                      font.pixelSize: Style.font.caption
+                    }
+                  }
                 }
               }
             }
@@ -289,34 +292,59 @@ Panel {
               onClicked: if (!browseProc.running) browseProc.running = true
             }
           }
+        }
+      }
 
-          PanelSeparator { foreground: root.foreground }
-
-          Button {
-            width: parent.width
-            text: printProc.running ? "Sending…" : "Print"
-            bordered: true
-            selected: root.canPrint
-            enabled: root.canPrint
-            opacity: root.canPrint ? 1 : 0.5
-            foreground: root.foreground
-            fontFamily: root.fontFamily
-            fontSize: Style.font.body
-            verticalPadding: Style.spacing.controlPaddingY
-            onClicked: root.printNow()
-          }
-
+      Column {
+        id: footer
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
+        spacing: Style.space(10)
+      PanelHero {
+        width: footer.width
+        title: "Print"
+        meta: root.printers.length + (root.printers.length === 1 ? " printer" : " printers")
+        foreground: root.foreground
+        fontFamily: root.fontFamily
+        iconComponent: Component {
           Text {
-            visible: text !== ""
-            width: parent.width
-            text: root.status
-            color: root.statusError ? root.urgent : root.dim
+            text: ""
+            color: root.foreground
             font.family: root.fontFamily
-            font.pixelSize: Style.font.caption
-            horizontalAlignment: Text.AlignHCenter
-            wrapMode: Text.WordWrap
+            font.pixelSize: Style.font.display
           }
         }
+      }
+
+      PanelSeparator { foreground: root.foreground }
+
+      Button {
+        width: footer.width
+        text: printProc.running ? "Sending…" : "Print"
+        bordered: true
+        selected: root.canPrint
+        enabled: root.canPrint
+        opacity: root.canPrint ? 1 : 0.5
+        foreground: root.foreground
+        fontFamily: root.fontFamily
+        fontSize: Style.font.body
+        verticalPadding: Style.spacing.controlPaddingY
+        onClicked: root.printNow()
+      }
+
+      Text {
+        visible: text !== ""
+        width: footer.width
+        text: root.status
+        color: root.statusError ? root.urgent : root.dim
+        font.family: root.fontFamily
+        font.pixelSize: Style.font.caption
+        horizontalAlignment: Text.AlignHCenter
+        wrapMode: Text.WordWrap
+      }
+
+      PanelSeparator { foreground: root.foreground }
       }
     }
   }
