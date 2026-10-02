@@ -48,7 +48,7 @@ Move it with `omarchy bar move darkosxl.printer --section right`.
 
 ## Use
 
-Click the printer icon. Printers are discovered automatically (the list refreshes every 15 s while open; `r` refreshes now). The default printer is preselected and marked ★. Recent PDFs from `~/Downloads`, `~/Documents` and `~/Desktop` are listed; `Browse…` opens a file picker. `Enter` prints, `Esc` closes.
+Click the printer icon. Printers are discovered automatically (the list refreshes every 15 s while open; `r` refreshes now). Click the ☆ next to a printer to favorite it; favorites (★) sort to the top and are remembered in `~/.local/state/omarchy-1-click-print/favorites`. The system default printer is preselected and marked `(default)`. Recent PDFs from `~/Downloads`, `~/Documents` and `~/Desktop` are listed; `Browse…` opens a file picker. `Enter` prints, `Esc` closes.
 
 ## Update and remove
 

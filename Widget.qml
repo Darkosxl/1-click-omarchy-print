@@ -16,7 +16,10 @@ Panel {
   readonly property string fontFamily: bar ? bar.fontFamily : Style.font.family
   readonly property string binDir: Qt.resolvedUrl("bin/").toString().replace("file://", "")
 
-  property var printers: []        // [{name, state, isDefault}]
+  property var printers: []        // [{name, state, isDefault, favorite}], favorites first
+  property var rawPrinters: []
+  property var favorites: []       // printer names, persisted in favFile
+  readonly property string favFile: Quickshell.env("HOME") + "/.local/state/omarchy-1-click-print/favorites"
   property var recentFiles: []     // [path]
   property string selectedPrinter: ""
   property string selectedFile: ""
@@ -42,13 +45,35 @@ Panel {
       var f = lines[i].split("\t")
       out.push({ name: f[0], state: f[1] || "unknown", isDefault: f[2] === "1" })
     }
-    printers = out
+    rawPrinters = out
+    resortPrinters()
+    out = printers
     var known = false
     for (var j = 0; j < out.length; j++) if (out[j].name === selectedPrinter) known = true
     if (!known) {
       selectedPrinter = ""
       for (var k = 0; k < out.length; k++) if (out[k].isDefault) selectedPrinter = out[k].name
+      if (selectedPrinter === "" && out.length > 0 && out[0].favorite) selectedPrinter = out[0].name
     }
+  }
+
+  function resortPrinters() {
+    var withFav = rawPrinters.map(function(p) {
+      return { name: p.name, state: p.state, isDefault: p.isDefault, favorite: favorites.indexOf(p.name) >= 0 }
+    })
+    // Stable: favorites first, discovery order within each group.
+    printers = withFav.filter(function(p) { return p.favorite }).concat(withFav.filter(function(p) { return !p.favorite }))
+  }
+
+  function toggleFavorite(name) {
+    var i = favorites.indexOf(name)
+    var next = favorites.slice()
+    if (i >= 0) next.splice(i, 1); else next.push(name)
+    favorites = next
+    resortPrinters()
+    // Names go in as argv, never interpolated into shell code.
+    favSave.command = ["bash", "-c", 'mkdir -p "$(dirname "$1")" && f=$1 && shift && printf "%s\n" "$@" > "$f"', "_", favFile].concat(next)
+    favSave.running = true
   }
 
   function applyRecent(text) {
@@ -82,6 +107,21 @@ Panel {
     repeat: true
     onTriggered: root.refresh()
   }
+
+  Process {
+    id: favLoad
+    command: ["bash", "-c", 'cat "$1" 2>/dev/null || true', "_", root.favFile]
+    running: true
+    stdout: StdioCollector {
+      waitForEnd: true
+      onStreamFinished: {
+        root.favorites = String(text || "").split("\n").filter(function(l) { return l !== "" })
+        root.resortPrinters()
+      }
+    }
+  }
+
+  Process { id: favSave }
 
   Process {
     id: listProc
@@ -210,7 +250,8 @@ Panel {
                   Button {
                     required property var modelData
                     width: printerList.width
-                    text: root.pretty(modelData.name) + (modelData.isDefault ? "  ★" : "")
+                    text: root.pretty(modelData.name) + (modelData.isDefault ? "  (default)" : "")
+                    leftPadding: Style.space(34)
                     leftAlign: true
                     bordered: true
                     selected: modelData.name === root.selectedPrinter
@@ -219,6 +260,24 @@ Panel {
                     fontSize: Style.font.bodySmall
                     verticalPadding: Style.spacing.controlPaddingY
                     onClicked: root.selectedPrinter = modelData.name
+
+                    Text {
+                      id: favStar
+                      anchors.left: parent.left
+                      anchors.leftMargin: Style.space(10)
+                      anchors.verticalCenter: parent.verticalCenter
+                      text: modelData.favorite ? "★" : "☆"
+                      color: modelData.favorite ? root.foreground : root.dim
+                      font.family: root.fontFamily
+                      font.pixelSize: Style.font.body
+
+                      MouseArea {
+                        anchors.fill: parent
+                        anchors.margins: -Style.space(6)
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: root.toggleFavorite(modelData.name)
+                      }
+                    }
 
                     Text {
                       anchors.right: parent.right
