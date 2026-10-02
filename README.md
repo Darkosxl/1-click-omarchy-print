@@ -1,6 +1,6 @@
 # omarchy-printer
 
-An [Omarchy](https://omarchy.org) top-bar button: click it, choose a PDF, choose a printer, done.
+An [Omarchy](https://omarchy.org) top-bar button. Click it for a popup panel: pick a printer, pick a PDF (recent ones listed, or Browse…), press Print.
 
 Printers come from CUPS, so anything CUPS sees shows up: network printers
 discovered over mDNS/DNS-SD (AirPrint / IPP Everywhere) via Avahi, USB printers,
@@ -27,8 +27,7 @@ Move it with `omarchy bar move darkosxl.printer --section right`.
 
 ## Use
 
-Click the printer icon. Pick a PDF, pick a printer, a notification confirms the job.
-Also usable standalone: `bin/omarchy-printer file.pdf`.
+Click the printer icon. Printers are discovered automatically (the list refreshes every 15 s while open; `r` refreshes now). The default printer is preselected and marked ★. Recent PDFs from `~/Downloads`, `~/Documents` and `~/Desktop` are listed; `Browse…` opens a file picker. `Enter` prints, `Esc` closes.
 
 ## Troubleshooting
 

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Native file picker; prints the chosen path (nothing on cancel).
+exec zenity --file-selection --title="PDF to print" --file-filter='PDF | *.pdf *.PDF' --filename="$HOME/"

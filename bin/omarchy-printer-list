@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Print one line per CUPS destination: name<TAB>state<TAB>default(0|1)
+# state is ready | printing | disabled
+def=$(lpstat -d 2>/dev/null | sed -n 's/^system default destination: //p')
+states=$(lpstat -p 2>/dev/null)
+lpstat -e 2>/dev/null | while IFS= read -r p; do
+  line=$(grep -m1 "^printer $p " <<<"$states")
+  case $line in
+    *"now printing"*) s=printing ;;
+    *disabled*)       s=disabled ;;
+    *idle*)           s=ready ;;
+    *)                s=ready ;;
+  esac
+  printf '%s\t%s\t%s\n' "$p" "$s" "$([[ $p == "$def" ]] && echo 1 || echo 0)"
+done
