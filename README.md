@@ -13,11 +13,11 @@ and manually added queues.
 Other Omarchy printer plugins manage printers (settings, queues, toner) or are full print dialogs. This one does a single job:
 
 - **Lives in the top bar.** One click opens a small popup; no launcher, no separate window.
-- **Simple.** Pick a printer, pick a PDF, press Print. No page ranges, duplex or settings screens.
+- **Simple.** Pick a printer, pick a PDF, press Print. A4, black and white, one-sided by default; two small switches flip color and two-sided. No page ranges or settings screens.
 - **Auto-discovers printers.** Whatever CUPS sees (AirPrint/IPP network, USB) shows up, with the default preselected.
 - **Light.** Plain `lp` plus `zenity`; no Python packages, no printer drivers.
 
-If you need toner levels, queue control or duplex, use one of those plugins alongside this one.
+If you need toner levels, queue control or page ranges, use one of those plugins alongside this one.
 
 ## Quick start
 

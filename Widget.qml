@@ -26,6 +26,8 @@ Panel {
   property string status: ""
   property bool statusError: false
   property bool cursorActive: false
+  property bool color: false       // off = black and white
+  property bool twoSided: false
 
   readonly property bool canPrint: selectedPrinter !== "" && selectedFile !== "" && !printProc.running
 
@@ -86,7 +88,11 @@ Panel {
     if (!canPrint) return
     status = "Sending…"
     statusError = false
-    printProc.command = ["lp", "-d", selectedPrinter, "-t", baseName(selectedFile), "--", selectedFile]
+    printProc.command = ["lp", "-d", selectedPrinter, "-t", baseName(selectedFile),
+      "-o", "media=A4",
+      "-o", "print-color-mode=" + (color ? "color" : "monochrome"),
+      "-o", "sides=" + (twoSided ? "two-sided-long-edge" : "one-sided"),
+      "--", selectedFile]
     printProc.running = true
   }
 
@@ -97,6 +103,8 @@ Panel {
   onOpenedChanged: if (opened) {
     cursorActive = false
     status = ""
+    color = false
+    twoSided = false
     refresh()
     Qt.callLater(function() { keyCatcher.forceActiveFocus() })
   }
@@ -390,6 +398,37 @@ Panel {
         fontSize: Style.font.body
         verticalPadding: Style.spacing.controlPaddingY
         onClicked: root.printNow()
+      }
+
+      // A4 always; these two reset to off every time the panel opens.
+      Row {
+        anchors.horizontalCenter: parent.horizontalCenter
+        spacing: Style.space(16)
+
+        Repeater {
+          model: [{ label: "Color", prop: "color" }, { label: "Two-sided", prop: "twoSided" }]
+
+          Row {
+            required property var modelData
+            spacing: Style.space(4)
+
+            Text {
+              anchors.verticalCenter: parent.verticalCenter
+              text: modelData.label
+              color: root[modelData.prop] ? root.foreground : root.dim
+              font.family: root.fontFamily
+              font.pixelSize: Style.font.caption
+            }
+
+            ToggleSwitch {
+              anchors.verticalCenter: parent.verticalCenter
+              trackHeight: 16
+              checked: root[modelData.prop]
+              foreground: root.foreground
+              onToggled: root[modelData.prop] = !root[modelData.prop]
+            }
+          }
+        }
       }
 
       Text {
